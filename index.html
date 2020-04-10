@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Bitmovin Demo</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400" rel="stylesheet">
+    <link rel="icon" type="image/png" href="../images/bit-fav.png">
+    <!-- Bitmovin Player -->
+    <script src="//cdn.bitmovin.com/player/web/8/bitmovinplayer.js"></script>
+    <!-- Vue JS -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.21.1/babel.min.js"></script>
+
+    <!-- Utilize Client Side Browser Detection -->
+    <!-- Bowser by lancedikson - https://github.com/lancedikson/bowser -->
+    <!-- User-Agent Detection May Also Be Utilzied however it may be spoofed and some browsers have plans to deprecate -->
+    <!-- Chrome Deprecation: https://www.zdnet.com/article/google-to-phase-out-user-agent-strings-in-chrome/ -->
+
+    <script src="https://unpkg.com/bowser@2.7.0/es5.js"></script>
+
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Open Sans', sans-serif;
+            color: #fff;
+            font-weight: 300;
+        }
+
+        body {
+            background: rgba(44, 131, 185, 1);
+            background: -moz-linear-gradient(left, rgba(44, 131, 185, 1) 0%, rgba(30, 171, 227, 1) 100%);
+            background: -webkit-gradient(left top, right top, color-stop(0%, rgba(44, 131, 185, 1)), color-stop(100%, rgba(30, 171, 227, 1)));
+            background: -webkit-linear-gradient(left, rgba(44, 131, 185, 1) 0%, rgba(30, 171, 227, 1) 100%);
+            background: -o-linear-gradient(left, rgba(44, 131, 185, 1) 0%, rgba(30, 171, 227, 1) 100%);
+            background: -ms-linear-gradient(left, rgba(44, 131, 185, 1) 0%, rgba(30, 171, 227, 1) 100%);
+            background: linear-gradient(to right, rgba(44, 131, 185, 1) 0%, rgba(30, 171, 227, 1) 100%);
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#2c83b9', endColorstr='#1eabe3', GradientType=1);
+        }
+
+        #wrapper {
+            background: url(../images/logo-bg-demopage.png);
+            height: 100vh;
+        }
+
+        #banner {
+            border-bottom: 1px solid #fff;
+            background-color: #1eabe3;
+            width: 100%
+        }
+
+        #banner h1 {
+            margin: 0;
+            padding: 30px;
+        }
+
+        .logo {
+            padding: 10px;
+            width: 25%;
+            min-width: 350px;
+            float: left;
+            margin: auto;
+        }
+
+        .title {
+            width: 75%;
+            white-space: nowrap;
+        }
+
+        .clear {
+            clear: both;
+        }
+
+        .content {
+            margin-bottom: 10em;
+        }
+
+        h1,
+        h2,
+        h3,
+        p {
+            font-weight: 300;
+            text-align: center;
+            margin: 40px;
+        }
+
+        #player {
+            max-width: 900px;
+            width: 90%;
+            margin: auto;
+            -webkit-box-shadow: 0px 0px 56px 0px rgba(0, 0, 0, 0.75);
+            -moz-box-shadow: 0px 0px 56px 0px rgba(0, 0, 0, 0.75);
+            box-shadow: 0px 0px 56px 0px rgba(0, 0, 0, 0.75);
+        }
+
+        a {
+            color: #97d9ef;
+            font-weight: 400;
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: #fff;
+        }
+
+        @media (max-width: 800px) {
+            .logo {
+                width: 100%;
+            }
+
+            .title {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="wrapper">
+        <div id="banner">
+            <div class="logo"><img src="logo.png" height="42" width="42"></div>
+            <div class="title">
+                <h1>Vue.js Sample</h1>
+            </div>
+            <div class="clear"></div>
+        </div>
+        <div class="container">
+            <h1>HTML5 Adaptive Streaming Player for MPEG-DASH & HLS</h1>
+            <h2>Your videos play everywhere with low startup delay, no buffering and in highest quality.</h2>
+            <div class="content">
+                <div id="player-wrapper">
+                    <h2>Your videos are playing in {{browserTypeDetect}} </h2>
+
+                    <bitmovinplayer />
+                </div>
+                <div class="description">
+                    <p>For more information about the bitmovin player, please have a look at our online <a
+                            href="//bitmovin.com/support" target="_blank">Developer Section</a>.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/babel">
+
+// Utilize bowser.js to determine browser type.  Map the browser type statically to the codec / stream based on March 2020 reseach on codec support. 
+        var getBrowser = function () {
+            var browserInfoData = bowser.getParser(window.navigator.userAgent);
+            var browserType = browserInfoData.parsedResult.browser.name;
+            console.log("This is the component browser Info", browserInfoData);
+            if (browserType == "Chrome" || browserType == "Firefox" || browserType == "Microsoft Edge" || browserType == "UC Browser" ) {
+                return 'https://bitmovin-a.akamaihd.net/content/multi-codec/vp9/stream.mpd';
+            }
+            else if (browserType == "Safari" || browserType == "Android" || browserType == "Samsung Internet for Android") {
+                return 'https://bitmovin-a.akamaihd.net/content/multi-codec/hevc/stream.mpd';
+            } else {
+                return 'https://bitmovin-a.akamaihd.net/content/multi-codec/h264/stream.mpd'
+            }
+        }
+
+        let video = getBrowser();
+        console.log("This is the video", video)
+        let bitmovinPlayerComponent = {
+            template: '<div id="player" ref="player"></div>',
+            data() {
+                return {
+                    player: null,
+                    playerConfig: {
+// Player key below is not reqired if the code is run on localhost, however, the browser must access over http (not locally as a file). 
+                        key: 'Your player key goes here'
+                    },
+                    source: {
+                        dash: video,
+                        poster: 'https://bitdash-a.akamaihd.net/content/MI201109210084_1/poster.jpg'
+                    }
+                }
+            },
+            methods: {
+                setupPlayer() {
+                    const player = new bitmovin.player.Player(this.$refs.player, this.playerConfig);
+                    player.load(this.source).then(() => {
+                        this.player = player;
+                        console.log('Successfully loaded source');
+                    }, () => {
+                        console.log('Error while loading source');
+                    });
+                },
+                destroyPlayer() {
+                    if (this.player) {
+                        this.player.destroy();
+                        this.player = null;
+                    }
+                }
+            },
+            mounted() {
+                this.setupPlayer();
+            },
+            destroyed() {
+                this.destroyPlayer();
+            }
+        };
+
+        new Vue({
+            el: '#player-wrapper',
+            data: {
+                browserTypeDetect: 'not run'
+            },
+            created() {
+                var browserInfo = bowser.getParser(window.navigator.userAgent);
+                this.browserTypeDetect = browserInfo.parsedResult.browser.name;
+                console.log("this is browserInfo", browserInfo);
+            },
+            components: {
+                'bitmovinplayer': bitmovinPlayerComponent
+            }
+        })
+
+    </script>
+</body>
+
+</html>
